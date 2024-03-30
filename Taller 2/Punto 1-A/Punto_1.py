@@ -170,6 +170,10 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.pushButton_suma.clicked.connect(self.Suma)
         self.pushButton_resta.clicked.connect(self.Resta)
+        self.pushButton_mult.clicked.connect(self.Multi)
+        self.pushButton_division.clicked.connect(self.Division)
+        self.pushButton_residuo.clicked.connect(self.Residuo)
+        self.pushButton_cociente.clicked.connect(self.cociente)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -207,6 +211,24 @@ class Ui_Dialog(object):
         c = int(a)//int(b)
         self.Resultado.setText(str(c))
         self.Operacion.setText("//")
+    def Multi(self):
+        a = self.Numero1.toPlainText()
+        b = self.Numero2.toPlainText()
+        c = int(a)*int(b)
+        self.Resultado.setText(str(c))
+        self.Operacion.setText("x")
+    def Division(self):
+        a = self.Numero1.toPlainText()
+        b = self.Numero2.toPlainText()
+        c = int(a)/int(b)
+        self.Resultado.setText(str(c))
+        self.Operacion.setText("/")
+    def Residuo(self):
+        a = self.Numero1.toPlainText()
+        b = self.Numero2.toPlainText()
+        c = int(a)%int(b)
+        self.Resultado.setText(str(c))
+        self.Operacion.setText("%")
 
 if __name__ == "__main__":
     import sys
