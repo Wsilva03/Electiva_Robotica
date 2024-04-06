@@ -109,7 +109,7 @@ class Ui_Dialog(object):
         self.Logo_u = QtWidgets.QLabel(Dialog)
         self.Logo_u.setGeometry(QtCore.QRect(330, 360, 381, 251))
         self.Logo_u.setText("")
-        self.Logo_u.setPixmap(QtGui.QPixmap("E:/Informacion/u/Electiva Robotica/Taller 2/logo-ecci.png"))
+        self.Logo_u.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
         self.Logo_u.setScaledContents(True)
         self.Logo_u.setObjectName("Logo_u")
         self.Art = QtWidgets.QTextEdit(Dialog)

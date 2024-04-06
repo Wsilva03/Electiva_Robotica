@@ -118,7 +118,7 @@ class TrigFunctionsPlotter(QtWidgets.QDialog):
         self.label_4 = QtWidgets.QLabel(self)
         self.label_4.setGeometry(QtCore.QRect(370, 420, 261, 241))
         self.label_4.setText("")
-        self.label_4.setPixmap(QtGui.QPixmap("E:/Informacion/u/Electiva Robotica/Taller 2/logo-ecci.png"))
+        self.label_4.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
         self.label_4.setScaledContents(True)
         self.label_4.setObjectName("label_4")
 

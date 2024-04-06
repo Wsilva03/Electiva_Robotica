@@ -40,7 +40,7 @@ class Ui_MainWindow(object):
         self.Logo = QtWidgets.QLabel(self.centralwidget)
         self.Logo.setGeometry(QtCore.QRect(490, 480, 291, 111))
         self.Logo.setText("")
-        self.Logo.setPixmap(QtGui.QPixmap("E:/Informacion/u/Electiva Robotica/Taller 2/logo-ecci.png"))
+        self.Logo.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
         self.Logo.setScaledContents(True)
         self.Logo.setObjectName("Logo")
         MainWindow.setCentralWidget(self.centralwidget)
