@@ -59,6 +59,7 @@ class Ui_Dialog(object):
         self.Logo = QtWidgets.QLabel(Dialog)
         self.Logo.setGeometry(QtCore.QRect(320, 150, 271, 231))
         self.Logo.setText("")
+        self.Logo.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
         self.Logo.setScaledContents(True)
         self.Logo.setObjectName("Logo")
         self.Estado = QtWidgets.QLabel(Dialog)

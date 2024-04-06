@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QImage, QPixmap
 import numpy as np
 import matplotlib.pyplot as plt
-from PyQt5 import QtCore, QtGui, QtWidgets
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+
 
 class TrigFunctionsPlotter(QtWidgets.QDialog):
     def __init__(self):
@@ -143,7 +146,6 @@ class TrigFunctionsPlotter(QtWidgets.QDialog):
         self.label_3.setText(_translate("Dialog", "Wendy Dayan Silva Venegas - 66934"))
         self.label_6.setText(_translate("Dialog", "Juan Esteban Sanchez Lamprea - 66912"))
         self.label_9.setText(_translate("Dialog", "Ing Mecatronica. Electiva de robotica"))
-
     def plot_trig_function(self):
         func_index = self.funciones_lista.currentIndex()
         if func_index == 0:
@@ -173,9 +175,11 @@ class TrigFunctionsPlotter(QtWidgets.QDialog):
         ax.grid(True)
 
         # Convertir la gráfica a una imagen
-        canvas = FigureCanvas(fig)
-        canvas.draw()
-        pixmap = canvas.grab()
+        fig.canvas.draw()  # Esta línea es importante para actualizar el canvas
+        img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        img = img.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+        qImg = QImage(img, img.shape[1], img.shape[0], QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(qImg)
 
         # Mostrar la imagen en el QLabel
         self.Grafica.setPixmap(pixmap)

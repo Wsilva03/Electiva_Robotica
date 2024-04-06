@@ -15,14 +15,23 @@ class Ui_MainWindow(object):
         self.Resistencia = QtWidgets.QSlider(self.centralwidget)
         self.Resistencia.setGeometry(QtCore.QRect(130, 70, 160, 22))
         self.Resistencia.setOrientation(QtCore.Qt.Horizontal)
+        self.Resistencia.setMinimum(0)
+        self.Resistencia.setMaximum(1000)
+        self.Resistencia.setValue(100)  # Valor inicial
         self.Resistencia.setObjectName("Resistencia")
         self.Capacitancia = QtWidgets.QSlider(self.centralwidget)
         self.Capacitancia.setGeometry(QtCore.QRect(130, 120, 160, 22))
         self.Capacitancia.setOrientation(QtCore.Qt.Horizontal)
+        self.Capacitancia.setMinimum(0)
+        self.Capacitancia.setMaximum(100)
+        self.Capacitancia.setValue(10)  # Valor inicial
         self.Capacitancia.setObjectName("Capacitancia")
         self.Voltaje = QtWidgets.QSlider(self.centralwidget)
         self.Voltaje.setGeometry(QtCore.QRect(130, 170, 160, 22))
         self.Voltaje.setOrientation(QtCore.Qt.Horizontal)
+        self.Voltaje.setMinimum(0)
+        self.Voltaje.setMaximum(24)
+        self.Voltaje.setValue(12)  # Valor inicial
         self.Voltaje.setObjectName("Voltaje")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 60, 111, 31))
@@ -56,7 +65,7 @@ class Ui_MainWindow(object):
         self.Logo = QtWidgets.QLabel(self.centralwidget)
         self.Logo.setGeometry(QtCore.QRect(480, 320, 261, 301))
         self.Logo.setText("")
-        self.Logo.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png""))
+        self.Logo.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
         self.Logo.setScaledContents(True)
         self.Logo.setObjectName("Logo")
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
@@ -184,20 +193,20 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Wendy Dayan Silva Venegas - 66934"))
         self.label_8.setText(_translate("MainWindow", "Juan Bernal Garcia - 87190"))
         self.label_9.setText(_translate("MainWindow", "Ing Mecatronica. Electiva de robotica"))
-        self.label_4.setText(_translate("MainWindow", "100 Ω"))
-        self.label_11.setText(_translate("MainWindow", "100 F"))
-        self.label_12.setText(_translate("MainWindow", "100 V"))
+        self.label_4.setText(_translate("MainWindow", "1000 Ω"))
+        self.label_11.setText(_translate("MainWindow", "100 UF"))
+        self.label_12.setText(_translate("MainWindow", "24 V"))
         self.label_13.setText(_translate("MainWindow", "0 Ω"))
-        self.label_14.setText(_translate("MainWindow", "0 F"))
+        self.label_14.setText(_translate("MainWindow", "0 UF"))
         self.label_15.setText(_translate("MainWindow", "0 V"))
     def update_values(self):
         self.R = self.Resistencia.value()
-        self.C = self.Capacitancia.value() * 1e-3  # Convertir a F
-        self.V0 = self.Voltaje.value() / 100.0  # Dividir por 100 para obtener el valor correcto
+        self.C = self.Capacitancia.value() * 1e-6  # Convertir a F
+        self.V0 = self.Voltaje.value()  # Dividir por 100 para obtener el valor correcto
         # Actualizar el texto de Vol_val con el valor de self.V0
         self.Vol_val.setText(f"{self.V0} V")
         self.Res_val.setText(f"{self.R} Ω")
-        self.Cap_val.setText(f"{self.C} F")
+        self.Cap_val.setText(f"{self.C/1e-6 } UF")
         # Calcular el valor de self.V
         #self.t = np.linspace(0, 10, 500)
         self.t = np.linspace(0, 5 * self.R * self.C, 1000)

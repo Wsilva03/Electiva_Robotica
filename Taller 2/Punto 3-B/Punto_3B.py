@@ -1,5 +1,24 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+import RPi.GPIO as GPIO
+import time
+import sys
 
+if __name__ == "__main__":
+    POWER_PIN = 12  # GPIO pin that provides power to the rain sensor
+    DO_PIN = 7     # GPIO pin connected to the DO pin of the rain sensor
+
+    def setup():
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(POWER_PIN, GPIO.OUT)  # configure the power pin as an OUTPUT
+        GPIO.setup(DO_PIN, GPIO.IN)
+
+    def cleanup():
+        GPIO.cleanup()
+
+    app = QtWidgets.QApplication([])
+    window = SensorApp()
+    window.show()
+    sys.exit(app.exec_())
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -134,12 +153,24 @@ class Ui_Dialog(object):
         self.label_5.setText(_translate("Dialog", "Tiempo:"))
         self.pushButton.setText(_translate("Dialog", "Iniciar"))
 
-
 if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
-    ui.setupUi(Dialog)
-    Dialog.show()
+    POWER_PIN = 12  # GPIO pin that provides power to the rain sensor
+    DO_PIN = 7     # GPIO pin connected to the DO pin of the rain sensor
+
+    def setup():
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(POWER_PIN, GPIO.OUT)  # configure the power pin as an OUTPUT
+        GPIO.setup(DO_PIN, GPIO.IN)
+
+    def cleanup():
+        GPIO.cleanup()
+
+    app = QtWidgets.QApplication([])
+    window = SensorApp()
+    window.show()
+    sys.exit(app.exec_())
+if __name__ == "__main__":
+    app = QtWidgets.QApplication([])
+    window = SensorApp()
+    window.show()
     sys.exit(app.exec_())

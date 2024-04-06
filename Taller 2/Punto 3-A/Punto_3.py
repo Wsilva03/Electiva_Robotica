@@ -144,13 +144,13 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         func_index = self.Lista.currentIndex()
         if func_index == 1:
-            self.Img_robot.setPixmap(QtGui.QPixmap("E:/Informacion/u/Electiva Robotica/Taller 2/Punto 3/cartesiano.png"))
+            self.Img_robot.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/Punto 3-A/cartesiano.jpeg"))
             self.Art.setText(_translate("Dialog", "3 articulaciones deslizantes"))
         elif func_index == 2:
-            self.Img_robot.setPixmap(QtGui.QPixmap("E:/Informacion/u/Electiva Robotica/Taller 2/Punto 3/esferico.png"))
+            self.Img_robot.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/Punto 3-A/esferico.png"))
             self.Art.setText(_translate("Dialog", "2 articulaciones rotacionales y 1 lineal"))
         elif func_index == 3:
-            self.Img_robot.setPixmap(QtGui.QPixmap("E:/Informacion/u/Electiva Robotica/Taller 2/Punto 3/cilíndrico.png"))
+            self.Img_robot.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/Punto 3-A/cilíndrico.png"))
             self.Art.setText(_translate("Dialog", "1 articulación de revolución y 2 prismáticas"))    
 
 
