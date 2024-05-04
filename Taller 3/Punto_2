@@ -1,0 +1,207 @@
+from PyQt5 import QtCore, QtGui, QtWidgets
+import roboticstoolbox as rtb
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from roboticstoolbox import RevoluteDH, DHRobot
+from spatialmath.base import tr2rpy
+import RPi.GPIO as GPIO
+import time
+import math
+import numpy
+
+l1 = 7.5
+l2 = 8.5
+
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(698, 620)
+        Dialog.setStyleSheet("background-color: rgb(170, 170, 255);")
+        self.label_9 = QtWidgets.QLabel(Dialog)
+        self.label_9.setGeometry(QtCore.QRect(30, 460, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_9.setFont(font)
+        self.label_9.setObjectName("label_9")
+        self.Logo = QtWidgets.QLabel(Dialog)
+        self.Logo.setGeometry(QtCore.QRect(330, 340, 311, 231))
+        self.Logo.setText("")
+        self.Logo.setPixmap(QtGui.QPixmap("E:/Informacion/u/Electiva Robotica/Electiva_Robotica/Taller 2/logo-ecci.png"))
+        self.Logo.setScaledContents(True)
+        self.Logo.setObjectName("Logo")
+        self.label_7 = QtWidgets.QLabel(Dialog)
+        self.label_7.setGeometry(QtCore.QRect(30, 380, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+        self.label_8 = QtWidgets.QLabel(Dialog)
+        self.label_8.setGeometry(QtCore.QRect(50, 420, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_8.setFont(font)
+        self.label_8.setObjectName("label_8")
+        self.label_4 = QtWidgets.QLabel(Dialog)
+        self.label_4.setGeometry(QtCore.QRect(30, 330, 261, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_4.setFont(font)
+        self.label_4.setObjectName("label_4")
+        self.label_10 = QtWidgets.QLabel(Dialog)
+        self.label_10.setGeometry(QtCore.QRect(110, 500, 81, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_10.setFont(font)
+        self.label_10.setObjectName("label_10")
+        self.label_6 = QtWidgets.QLabel(Dialog)
+        self.label_6.setGeometry(QtCore.QRect(20, 300, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_6.setFont(font)
+        self.label_6.setObjectName("label_6")
+        self.groupBox = QtWidgets.QGroupBox(Dialog)
+        self.groupBox.setGeometry(QtCore.QRect(60, 130, 151, 121))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        font.setBold(True)
+        font.setWeight(75)
+        self.groupBox.setFont(font)
+        self.groupBox.setObjectName("groupBox")
+        self.Eje_X = QtWidgets.QTextEdit(self.groupBox)
+        self.Eje_X.setGeometry(QtCore.QRect(50, 30, 71, 31))
+        self.Eje_X.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.Eje_X.setObjectName("Eje_X")
+        self.Eje_Y = QtWidgets.QTextEdit(self.groupBox)
+        self.Eje_Y.setGeometry(QtCore.QRect(50, 70, 71, 31))
+        self.Eje_Y.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.Eje_Y.setObjectName("Eje_Y")
+        self.label_2 = QtWidgets.QLabel(self.groupBox)
+        self.label_2.setGeometry(QtCore.QRect(20, 30, 21, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(self.groupBox)
+        self.label_3.setGeometry(QtCore.QRect(20, 70, 21, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.label = QtWidgets.QLabel(Dialog)
+        self.label.setGeometry(QtCore.QRect(250, 20, 111, 21))
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.Robot = QtWidgets.QLabel(Dialog)
+        self.Robot.setGeometry(QtCore.QRect(320, 70, 311, 231))
+        self.Robot.setText("")
+        self.Robot.setObjectName("Robot")
+        self.figure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+        self.canvas.setParent(self.Robot)
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        #self.Eje_X.textChanged.connect(self.simulate_robot)
+        self.Eje_Y.textChanged.connect(self.simulate_robot)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(19, GPIO.OUT)
+        GPIO.setup(16, GPIO.OUT)
+        self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
+        self.servo2 = GPIO.PWM(16, 50)  # GPIO 16 para Servo 2 con frecuencia de 50Hz
+        self.servo1.start(0)
+        self.servo2.start(0)
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.label_9.setText(_translate("Dialog", "Ing Mecatronica. Electiva de robotica"))
+        self.label_7.setText(_translate("Dialog", "Juan Camio Luna Calderon - 90522"))
+        self.label_8.setText(_translate("Dialog", "Juan Bernal Garcia - 87190"))
+        self.label_4.setText(_translate("Dialog", "Wendy Dayan Silva Venegas - 66934"))
+        self.label_10.setText(_translate("Dialog", "2024-1"))
+        self.label_6.setText(_translate("Dialog", "Juan Esteban Sanchez Lamprea - 66912"))
+        self.groupBox.setTitle(_translate("Dialog", "Posicion"))
+        self.label_2.setText(_translate("Dialog", "x"))
+        self.label_3.setText(_translate("Dialog", "y"))
+        self.label.setText(_translate("Dialog", "Taller 3 "))
+        self.Eje_X.setText(_translate("Dialog", "0"))
+        self.Eje_Y.setText(_translate("Dialog", "0"))
+
+    def simulate_robot(self):
+
+        # Cinemática inversa
+        print("antes")
+        Px = float(self.Eje_X.toPlainText())
+        Py = float(self.Eje_Y.toPlainText())
+        b = math.sqrt(Px**2+Py**2)
+        # Theta 2
+        cos_theta2 = (b**2-l2**2-l1**2)/(2*l1*l2)
+        try:
+            sen_theta2 = math.sqrt(1-(cos_theta2)**2)#(-)codo arriba
+        except:
+            sen_theta2 = math.sqrt(1+(cos_theta2)**2)#(+)codo abajo
+
+        theta2 = math.atan2(sen_theta2, cos_theta2)
+        print(f'theta 2 = {numpy.rad2deg(theta2):.4f}')
+        # Theta 1
+        alpha = math.atan2(Py,Px)
+        phi = math.atan2(l2*sen_theta2, l1+l2*cos_theta2)
+        theta1 = alpha - phi
+        print(f'theta 1 = {numpy.rad2deg(theta1):.4f}')
+        #-------------
+
+        q1 = theta1
+        q2 = theta2
+
+        R = []
+        R.append(RevoluteDH(d=0, alpha=0, a=l1, offset=0))
+        R.append(RevoluteDH(d=0, alpha=0, a=l2, offset=0))
+
+        self.servo1.ChangeDutyCycle(0)
+        duty = q1 / 18.0 + 2.5
+        self.servo1.ChangeDutyCycle(duty)
+        self.servo2.ChangeDutyCycle(0)
+        duty = q1 / 18.0 + 2.5
+        self.servo2.ChangeDutyCycle(duty)
+
+        Robot = DHRobot(R, name='Bender')
+        print(Robot)
+        Robot.plot([q1, q2], backend='pyplot', dt=0.050, vellipse=True, fellipse=True)
+        #Robot.teach([q1, q2], 'rpy/zyx', limits=[-30,30,-30,30,-30,30])
+        #plt.savefig('robot_plot.png')
+
+        #zlim([-15,30]);
+
+        MTH = Robot.fkine([q1,q2])
+        print(MTH)
+        print(f"Roll, Pitch, Yaw = {tr2rpy(MTH.R, 'deg', 'zyx')}")
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Dialog = QtWidgets.QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'Punto_4A.ui'
@@ -246,3 +247,253 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+=======
+import sys
+import matplotlib.pyplot as plt
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt, QTimer
+import numpy as np
+
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(800, 600)
+        MainWindow.setStyleSheet("background-color: rgb(76, 208, 255);")
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.Resistencia = QtWidgets.QSlider(self.centralwidget)
+        self.Resistencia.setGeometry(QtCore.QRect(130, 70, 160, 22))
+        self.Resistencia.setOrientation(QtCore.Qt.Horizontal)
+        self.Resistencia.setMinimum(0)
+        self.Resistencia.setMaximum(1000)
+        self.Resistencia.setValue(100)  # Valor inicial
+        self.Resistencia.setObjectName("Resistencia")
+        self.Capacitancia = QtWidgets.QSlider(self.centralwidget)
+        self.Capacitancia.setGeometry(QtCore.QRect(130, 120, 160, 22))
+        self.Capacitancia.setOrientation(QtCore.Qt.Horizontal)
+        self.Capacitancia.setMinimum(0)
+        self.Capacitancia.setMaximum(100)
+        self.Capacitancia.setValue(10)  # Valor inicial
+        self.Capacitancia.setObjectName("Capacitancia")
+        self.Voltaje = QtWidgets.QSlider(self.centralwidget)
+        self.Voltaje.setGeometry(QtCore.QRect(130, 170, 160, 22))
+        self.Voltaje.setOrientation(QtCore.Qt.Horizontal)
+        self.Voltaje.setMinimum(0)
+        self.Voltaje.setMaximum(24)
+        self.Voltaje.setValue(12)  # Valor inicial
+        self.Voltaje.setObjectName("Voltaje")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(10, 60, 111, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(10, 110, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(10, 170, 91, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.Grafica = QtWidgets.QLabel(self.centralwidget)
+        self.Grafica.setGeometry(QtCore.QRect(350, 20, 411, 261))
+        self.Grafica.setText("")
+        self.Grafica.setScaledContents(True)
+        self.Grafica.setObjectName("Grafica")
+        self.Logo = QtWidgets.QLabel(self.centralwidget)
+        self.Logo.setGeometry(QtCore.QRect(480, 320, 261, 301))
+        self.Logo.setText("")
+        self.Logo.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
+        self.Logo.setScaledContents(True)
+        self.Logo.setObjectName("Logo")
+        self.label_7 = QtWidgets.QLabel(self.centralwidget)
+        self.label_7.setGeometry(QtCore.QRect(30, 370, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+        self.label_10 = QtWidgets.QLabel(self.centralwidget)
+        self.label_10.setGeometry(QtCore.QRect(110, 490, 81, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_10.setFont(font)
+        self.label_10.setObjectName("label_10")
+        self.label_6 = QtWidgets.QLabel(self.centralwidget)
+        self.label_6.setGeometry(QtCore.QRect(20, 290, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_6.setFont(font)
+        self.label_6.setObjectName("label_6")
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setGeometry(QtCore.QRect(30, 330, 261, 41))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_5.setFont(font)
+        self.label_5.setObjectName("label_5")
+        self.label_8 = QtWidgets.QLabel(self.centralwidget)
+        self.label_8.setGeometry(QtCore.QRect(50, 410, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_8.setFont(font)
+        self.label_8.setObjectName("label_8")
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        self.label_9.setGeometry(QtCore.QRect(30, 450, 291, 51))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_9.setFont(font)
+        self.label_9.setObjectName("label_9")
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(280, 90, 47, 13))
+        self.label_4.setObjectName("label_4")
+        self.label_11 = QtWidgets.QLabel(self.centralwidget)
+        self.label_11.setGeometry(QtCore.QRect(280, 140, 31, 20))
+        self.label_11.setObjectName("label_11")
+        self.label_12 = QtWidgets.QLabel(self.centralwidget)
+        self.label_12.setGeometry(QtCore.QRect(280, 190, 31, 20))
+        self.label_12.setObjectName("label_12")
+        self.Res_val = QtWidgets.QLabel(self.centralwidget)
+        self.Res_val.setGeometry(QtCore.QRect(300, 70, 47, 13))
+        self.Res_val.setText("")
+        self.Res_val.setObjectName("Res_val")
+        self.Cap_val = QtWidgets.QLabel(self.centralwidget)
+        self.Cap_val.setGeometry(QtCore.QRect(300, 120, 47, 13))
+        self.Cap_val.setText("")
+        self.Cap_val.setObjectName("Cap_val")
+        self.Vol_val = QtWidgets.QLabel(self.centralwidget)
+        self.Vol_val.setGeometry(QtCore.QRect(300, 170, 47, 13))
+        self.Vol_val.setText("")
+        self.Vol_val.setObjectName("Vol_val")
+        self.label_13 = QtWidgets.QLabel(self.centralwidget)
+        self.label_13.setGeometry(QtCore.QRect(130, 90, 47, 13))
+        self.label_13.setObjectName("label_13")
+        self.label_14 = QtWidgets.QLabel(self.centralwidget)
+        self.label_14.setGeometry(QtCore.QRect(130, 140, 31, 20))
+        self.label_14.setObjectName("label_14")
+        self.label_15 = QtWidgets.QLabel(self.centralwidget)
+        self.label_15.setGeometry(QtCore.QRect(130, 190, 31, 20))
+        self.label_15.setObjectName("label_15")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.R = 1  # Resistencia en Ω
+        self.C = 5e-3  # Capacitancia en F
+        self.V0 = 1  # Voltaje inicial en V
+        self.t = np.linspace(0, 10, 500)
+        self.Carga = self.V0 * (1 - np.exp(-self.t / (self.R * self.C)))
+        self.Descarga = self.V0 * np.exp(-self.t / (self.R * self.C))
+
+        
+        # Conectar sliders
+        self.Resistencia.valueChanged.connect(self.update_values)
+        self.Capacitancia.valueChanged.connect(self.update_values)
+        self.Voltaje.valueChanged.connect(self.update_values)
+        
+        # Inicializar QTimer para actualizar el gráfico
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_plot)
+        self.timer.start(50)  # Actualizar cada 50 ms
+
+        MainWindow.setCentralWidget(self.centralwidget)
+        
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label.setText(_translate("MainWindow", "Resistencia:"))
+        self.label_2.setText(_translate("MainWindow", "Capacitancia:"))
+        self.label_3.setText(_translate("MainWindow", "Voltaje:"))
+        self.label_7.setText(_translate("MainWindow", "Juan Camio Luna Calderon - 90522"))
+        self.label_10.setText(_translate("MainWindow", "2024-1"))
+        self.label_6.setText(_translate("MainWindow", "Juan Esteban Sanchez Lamprea - 66912"))
+        self.label_5.setText(_translate("MainWindow", "Wendy Dayan Silva Venegas - 66934"))
+        self.label_8.setText(_translate("MainWindow", "Juan Bernal Garcia - 87190"))
+        self.label_9.setText(_translate("MainWindow", "Ing Mecatronica. Electiva de robotica"))
+        self.label_4.setText(_translate("MainWindow", "1000 Ω"))
+        self.label_11.setText(_translate("MainWindow", "100 UF"))
+        self.label_12.setText(_translate("MainWindow", "24 V"))
+        self.label_13.setText(_translate("MainWindow", "0 Ω"))
+        self.label_14.setText(_translate("MainWindow", "0 UF"))
+        self.label_15.setText(_translate("MainWindow", "0 V"))
+    def update_values(self):
+        self.R = self.Resistencia.value()
+        self.C = self.Capacitancia.value() * 1e-6  # Convertir a F
+        self.V0 = self.Voltaje.value()  # Dividir por 100 para obtener el valor correcto
+        # Actualizar el texto de Vol_val con el valor de self.V0
+        self.Vol_val.setText(f"{self.V0} V")
+        self.Res_val.setText(f"{self.R} Ω")
+        self.Cap_val.setText(f"{self.C/1e-6 } UF")
+        # Calcular el valor de self.V
+        #self.t = np.linspace(0, 10, 500)
+        self.t = np.linspace(0, 5 * self.R * self.C, 1000)
+        self.Carga = self.V0 * (1 - np.exp(-self.t / (self.R * self.C)))
+        self.Descarga = self.V0 * np.exp(-self.t / (self.R * self.C))
+        
+
+
+        
+    def update_plot(self):
+        _translate = QtCore.QCoreApplication.translate
+        #self.Vol_val.setText(_translate("MainWindow", self.Carga))
+        self.Carga = self.V0 * (1 - np.exp(-self.t / (self.R * self.C)))
+        self.Descarga = self.V0 * np.exp(-self.t / (self.R * self.C))
+        
+        plt.figure(figsize=(5, 5))
+        plt.plot(self.t, self.Carga, label='Carga')
+        plt.plot(self.t, self.Descarga, label='Descarga')
+        plt.xlabel('Tiempo (s)')
+        plt.ylabel('Voltaje (V)')
+        plt.title('Carga y Descarga de un Condensador')
+        
+        plt.savefig("grafica.png")
+        
+        pixmap = QtGui.QPixmap("grafica.png")
+        self.Grafica.setPixmap(pixmap)
+        self.Grafica.setScaledContents(True)
+        plt.close()
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
+>>>>>>> 93bd2c0f80925fbafb79295064af358832d2eac4

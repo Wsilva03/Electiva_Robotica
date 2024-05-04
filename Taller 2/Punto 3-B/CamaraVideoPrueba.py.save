@@ -1,0 +1,8 @@
+import picamera
+
+import time
+camara = picamera.PiCamera()#camara.vflip = true
+camara.start_recording('videoMuestra.h264')
+time.sleep(8)
+camara.stop_recording
+
