@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from roboticstoolbox import RevoluteDH, DHRobot
 from spatialmath.base import tr2rpy
+import RPi.GPIO as GPIO
+import time
+import math
+import numpy
+
+l1 = 7.5
+l2 = 8.5
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -114,8 +122,15 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        self.Eje_X.textChanged.connect(self.simulate_robot)
+        #self.Eje_X.textChanged.connect(self.simulate_robot)
         self.Eje_Y.textChanged.connect(self.simulate_robot)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(19, GPIO.OUT)
+        GPIO.setup(16, GPIO.OUT)
+        self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
+        self.servo2 = GPIO.PWM(16, 50)  # GPIO 16 para Servo 2 con frecuencia de 50Hz
+        self.servo1.start(0)
+        self.servo2.start(0)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -130,56 +145,57 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "x"))
         self.label_3.setText(_translate("Dialog", "y"))
         self.label.setText(_translate("Dialog", "Taller 3 "))
+        self.Eje_X.setText(_translate("Dialog", "0"))
+        self.Eje_Y.setText(_translate("Dialog", "0"))
 
     def simulate_robot(self):
 
-        
-        l1 = 7.5
-        l2 = 8.5
+        # Cinemática inversa
+        print("antes")
+        Px = float(self.Eje_X.toPlainText())
+        Py = float(self.Eje_Y.toPlainText())
+        b = math.sqrt(Px**2+Py**2)
+        # Theta 2
+        cos_theta2 = (b**2-l2**2-l1**2)/(2*l1*l2)
+        try:
+            sen_theta2 = math.sqrt(1-(cos_theta2)**2)#(-)codo arriba
+        except:
+            sen_theta2 = math.sqrt(1+(cos_theta2)**2)#(+)codo abajo
 
-        q1 = 0
-        q2 = 0
+        theta2 = math.atan2(sen_theta2, cos_theta2)
+        print(f'theta 2 = {numpy.rad2deg(theta2):.4f}')
+        # Theta 1
+        alpha = math.atan2(Py,Px)
+        phi = math.atan2(l2*sen_theta2, l1+l2*cos_theta2)
+        theta1 = alpha - phi
+        print(f'theta 1 = {numpy.rad2deg(theta1):.4f}')
+        #-------------
 
-        q = [q1, q2]
+        q1 = theta1
+        q2 = theta2
 
-        L = []
-        L.append(RevoluteDH(d=0, alpha=0, a=l1, offset=0))
-        L.append(RevoluteDH(d=0, alpha=0, a=l2, offset=0))
+        R = []
+        R.append(RevoluteDH(d=0, alpha=0, a=l1, offset=0))
+        R.append(RevoluteDH(d=0, alpha=0, a=l2, offset=0))
 
-        robot = DHRobot(L, name='Wall-e')
-        fig = Figure(figsize=(8, 6))
-        ax = fig.add_subplot(111, projection='3d')  # Create a 3D subplot
-        p = RobotPlot(robot, q, ax, use_viewer=False) 
-        ax.set_xlim([-l1 - l2, l1 + l2])
-        ax.set_ylim([-l1 - l2, l1 + l2])
-        ax.set_zlim([-0.5, l1 + l2])
-        fig.save('robot_arm.png')
-        pixmap = QtGui.QPixmap("robot_arm.png")
-        self.Robot.setPixmap(pixmap)
-        self.Robot.setScaledContents(True)
+        self.servo1.ChangeDutyCycle(0)
+        duty = q1 / 18.0 + 2.5
+        self.servo1.ChangeDutyCycle(duty)
+        self.servo2.ChangeDutyCycle(0)
+        duty = q1 / 18.0 + 2.5
+        self.servo2.ChangeDutyCycle(duty)
 
+        Robot = DHRobot(R, name='Bender')
+        print(Robot)
+        Robot.plot([q1, q2], backend='pyplot', dt=0.050, vellipse=True, fellipse=True)
+        #Robot.teach([q1, q2], 'rpy/zyx', limits=[-30,30,-30,30,-30,30])
+        #plt.savefig('robot_plot.png')
 
+        #zlim([-15,30]);
 
-
-        print(robot)
-        robot.teach(q, 'rpy/zyx', limits=[-17, 17, -17, 17, -17, 17])
-        robot.savefig("grafica.png")
-        pixmap = QtGui.QPixmap("grafica.png")
-        self.Robot.setPixmap(pixmap)
-        self.Robot.setScaledContents(True)
-        MTH = robot.fkine(q)
+        MTH = Robot.fkine([q1,q2])
         print(MTH)
-        print(f'Roll, Pitch, Yaw = {tr2rpy(MTH.R, "deg", "zyx")}')
-      
-        pixmap = QtGui.QPixmap("grafica.png")
-        self.Grafica.setPixmap(pixmap)
-        self.Grafica.setScaledContents(True)
-        plt.close()
-
-        # Update the canvas and GUI (using Matplotlib methods)
-        self.canvas.draw()
-        self.figure.canvas.draw()  # Explicitly call canvas draw for immediate update
-        self.Robot.update()
+        print(f"Roll, Pitch, Yaw = {tr2rpy(MTH.R, 'deg', 'zyx')}")
 
 if __name__ == "__main__":
     import sys
