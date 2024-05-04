@@ -1,0 +1,30 @@
+#------------------------------- Peter Corke ----------------------------------
+from roboticstoolbox import *
+from spatialmath.base import *
+import numpy
+from sympy import *
+
+l1 = 7.5
+l2 = 8.5
+
+q1 = 0
+q2 = 0
+
+q = [q1,q2]
+
+L = []
+L.append(RevoluteDH(d=0, alpha=0, a=l1, offset=0))
+L.append(RevoluteDH(d=0, alpha=0, a=l2, offset=0))
+
+Robot = DHRobot(L, name='Wall-e')
+print(Robot)
+
+Robot.teach(q, 'rpy/zyx', limits=[-17,17,-17,17,-17,17])
+
+#zlim([-15,30]);
+
+MTH = Robot.fkine(q)
+print(MTH)
+print(f'Roll, Pitch, Yaw = {tr2rpy(MTH.R, "deg", "zyx")}')
+#theta = Robot.ikine_6s(MTH,'llllll',)
+#print(f'theta1, theta2, theta3, theta4, theta5, theta6 = {theta}')
