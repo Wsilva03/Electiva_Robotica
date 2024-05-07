@@ -1,19 +1,41 @@
-"""
-@author Jesse Haviland
-"""
-
-import roboticstoolbox as rp
 import numpy as np
 
-# Make a panda robot
-panda = rp.models.DH.Panda()
+# Longitudes de los eslabones del robot
+l1 = 7.5
+l2 = 8.5
 
-# Init joint to the 'ready' joint angles
-panda.q = panda.qr
+def direct_kinematics(theta1, theta2):
+    # Transformaciones DH
+    T01 = np.array([
+        [np.cos(theta1), -np.sin(theta1), 0, 0],
+        [np.sin(theta1), np.cos(theta1), 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ])
 
-# Make 100 random sets of joint angles
-q = np.random.rand(100, 7)
+    T12 = np.array([
+        [np.cos(theta2), -np.sin(theta2), 0, l1],
+        [0, 0, -1, 0],
+        [np.sin(theta2), np.cos(theta2), 0, 0],
+        [0, 0, 0, 1]
+    ])
 
-# Plot the joint trajectory with a 50ms delay between configurations
-panda.plot(q=q, backend='pyplot', dt=0.050, vellipse=True, fellipse=True)
-# panda.plot(q=q, backend='swift', dt=0.050, vellipse=False, fellipse=False)
+    # Transformación homogénea del efector final
+    T02 = np.dot(T01, T12)
+
+    return T02
+
+# Ejemplo de uso
+theta1 = np.deg2rad(45)  # Ángulo de la articulación 1 (en radianes)
+theta2 = np.deg2rad(30)  # Ángulo de la articulación 2 (en radianes)
+
+# Calcular la cinemática directa para los ángulos dados
+T_efector = direct_kinematics(theta1, theta2)
+
+# Extraer la posición y orientación del efector final
+posicion = T_efector[:3, 3]
+orientacion = T_efector[:3, :3]
+
+print("Posición del efector final:", posicion)
+print("Orientación del efector final:")
+print(orientacion)
