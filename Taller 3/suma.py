@@ -1,20 +1,12 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'Taller3_1.ui'
+#
+# Created by: PyQt5 UI code generator 5.11.3
+#
+# WARNING! All changes made in this file will be lost!
+
 from PyQt5 import QtCore, QtGui, QtWidgets
-import matplotlib
-#matplotlib.use('Agg')
-import roboticstoolbox as rtb
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from roboticstoolbox import RevoluteDH, DHRobot
-from spatialmath.base import tr2rpy
-import RPi.GPIO as GPIO
-import tempfile
-import math
-import numpy as np
-from PyQt5.QtGui import QImage, QPixmap  # Import both QImage and QPixmap
-
-
-l1 = 7.5
-l2 = 8.5
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -32,8 +24,6 @@ class Ui_Dialog(object):
         self.Logo = QtWidgets.QLabel(Dialog)
         self.Logo.setGeometry(QtCore.QRect(330, 340, 311, 231))
         self.Logo.setText("")
-        self.Logo.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
-        self.Logo.setScaledContents(True)
         self.Logo.setObjectName("Logo")
         self.label_7 = QtWidgets.QLabel(Dialog)
         self.label_7.setGeometry(QtCore.QRect(30, 380, 291, 51))
@@ -118,7 +108,6 @@ class Ui_Dialog(object):
         self.Robot = QtWidgets.QLabel(Dialog)
         self.Robot.setGeometry(QtCore.QRect(320, 70, 311, 231))
         self.Robot.setText("")
-        self.Robot.setScaledContents(True)
         self.Robot.setObjectName("Robot")
         self.groupBox_2 = QtWidgets.QGroupBox(Dialog)
         self.groupBox_2.setGeometry(QtCore.QRect(50, 180, 151, 121))
@@ -162,15 +151,9 @@ class Ui_Dialog(object):
         self.label_13.setFont(font)
         self.label_13.setText("")
         self.label_13.setObjectName("label_13")
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        self.Eje_Y.textChanged.connect(self.simulate_robot)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(19, GPIO.OUT)
-        GPIO.setup(16, GPIO.OUT)
-        self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
-        self.servo2 = GPIO.PWM(16, 50)
-
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -185,72 +168,17 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "x"))
         self.label_3.setText(_translate("Dialog", "y"))
         self.label.setText(_translate("Dialog", "Taller 3 "))
-        self.Eje_X.setText(_translate("Dialog", "0"))
-        self.Eje_Y.setText(_translate("Dialog", "0"))
+        self.groupBox_2.setTitle(_translate("Dialog", "Angulos"))
         self.label_5.setText(_translate("Dialog", "M1:"))
         self.label_11.setText(_translate("Dialog", "M2:"))
-
-    def simulate_robot(self):
-        
-        # Cinemática inversa
-        Px = float(self.Eje_X.toPlainText())
-        Py = float(self.Eje_Y.toPlainText())
-        b = math.sqrt(Px**2+Py**2)
-        # Theta 2
-        cos_theta2 = (b**2-l2**2-l1**2)/(2*l1*l2)
-
-        try:
-            sen_theta2 = math.sqrt(1-(cos_theta2)**2)  # (-)codo arriba
-        except ValueError:
-            sen_theta2 = math.sqrt(1+(cos_theta2)**2)  # (+)codo abajo
-
-        theta2 = math.atan2(sen_theta2, cos_theta2)
-        print(f'theta 2 = {np.rad2deg(theta2):.4f}')
-        # Theta 1
-        alpha = math.atan2(Py, Px)
-        phi = math.atan2(l2*sen_theta2, l1+l2*cos_theta2)
-        theta1 = alpha - phi
-        print(f'theta 1 = {np.rad2deg(theta1):.4f}')
-        q1 = theta1
-        q2 = theta2
-        R = []
-        R.append(RevoluteDH(d=0, alpha=0, a=l1, offset=0))
-        R.append(RevoluteDH(d=0, alpha=0, a=l2, offset=0))
-        ang1 = np.rad2deg(theta1)
-        ang2 = np.rad2deg(theta2)
-        self.label_12.setText(f"{ang1} °")
-        self.label_13.setText(f"{ang2} °")
-
-        if 0 <= abs(int(ang1)) <=180 and 0 <= abs(int(ang2)) <= 180:
-            duty1 = abs(ang1) / 18.0 + 2.5  # Calculate duty cycle for angle 1
-            duty2 = abs(ang2) / 18.0 + 2.5  # Calculate duty cycle for angle 2
-            self.servo1.start(duty1)
-            self.servo2.start(duty2)
-            # Mueve los servos y apágalos inmediatamente
-            self.servo1.ChangeDutyCycle(duty1)
-            self.servo2.ChangeDutyCycle(duty2)
-        else:
-            print("Limite exedido")
-        
-        Robot = DHRobot(R, name='Wall-e')
-        #Robot.plot([q1, q2], limits=[-19, 19, -19, 19, -19, 19])
-
-        Robot.plot([q1, q2], backend='pyplot', block=False, limits=[-19, 19, -19, 19, -19, 19])  # Plot en 3D
-        plt.savefig("Ejemplo1.png")
-        self.Robot.setPixmap(QtGui.QPixmap("Ejemplo1.png"))
-        
-        MTH = Robot.fkine([q1, q2])
-        print(MTH)
-        print(f"Roll, Pitch, Yaw = {tr2rpy(MTH.R, 'deg', 'zyx')}")
-
 
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
+
