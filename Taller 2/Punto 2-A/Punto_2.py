@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -186,7 +186,7 @@ if __name__ == "__main__":
     ui = TrigFunctionsPlotter()
     ui.show()
     sys.exit(app.exec_())
-=======
+
 # -*- coding: utf-8 -*-
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -378,4 +378,3 @@ if __name__ == "__main__":
     ui = TrigFunctionsPlotter()
     ui.show()
     sys.exit(app.exec_())
->>>>>>> 93bd2c0f80925fbafb79295064af358832d2eac4

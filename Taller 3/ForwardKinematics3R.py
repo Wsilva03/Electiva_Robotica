@@ -20,6 +20,6 @@ def ForwardKinematics3R(l1,l2,l3,q1,q2,q3):
 
     MTH = Robot.fkine([q1,q2,q3])
     print(MTH)
-    print(f'Roll, Pitch, Yaw = {tr2rpy(MTH.R, 'deg', 'zyx')}')
+    print(f"Roll, Pitch, Yaw = {tr2rpy(MTH.R, 'deg', 'zyx')}")
     
     return MTH
