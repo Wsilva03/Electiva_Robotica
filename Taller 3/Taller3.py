@@ -250,6 +250,11 @@ class Ui_Dialog(object):
         self.Img_posicion.setGeometry(QtCore.QRect(10, 10, 311, 281))
         self.Img_posicion.setText("")
         self.Img_posicion.setObjectName("Img_posicion")
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(19, GPIO.OUT)
+        GPIO.setup(16, GPIO.OUT)
+        self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
+        self.servo2 = GPIO.PWM(16, 50)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -306,8 +311,8 @@ class Ui_Dialog(object):
         for i in range(0,6):
             if i==3:
                 # Reverse the order of the points
-                thetax_P1toP2 = numpy.arange(theta1[i], theta1[i+1], 0.2)[::-1]
-                thetay_P1toP2 = numpy.arange(theta2[i], theta2[i+1], 0.2)
+                thetax_P1toP2 = numpy.linspace(theta1[i], theta1[i+1], n)
+                thetay_P1toP2 = numpy.linspace(theta2[i], theta2[i+1], n)
                 print (thetay_P1toP2," ", thetax_P1toP2)
 
             else:
@@ -334,15 +339,18 @@ class Ui_Dialog(object):
         fig1.set_zlim(-19, 19)
         fig1.plot(d[0,i],d[1,i],d[2,i],'.b')
         for i in range (0,v):
-            Servos(thetax[i],thetay[i])
             MTH = plot_1(l1,l2,thetax[i],thetay[i])
             print (MTH)
             d[:,i] =  MTH.t    
             fig1.plot(d[0,i],d[1,i],d[2,i],'.b')
-        ang1 = np.rad2deg(theta1)
-        ang2 = np.rad2deg(theta2)
-        self.label_12.setText(f"{ang1} °")
-        self.label_13.setText(f"{ang2} °")
+            ang1 = np.rad2deg(thetax[i])
+            ang2 = np.rad2deg(thetay[i])
+
+            duty1 = abs(ang1) / 18.0 + 2.5  # Calculate duty cycle for angle 1
+            duty2 = abs(ang2) / 18.0 + 2.5  # Calculate duty cycle for angle 2
+            self.servo1.start(duty1)
+            self.servo2.start(duty2)
+
         
 
 
