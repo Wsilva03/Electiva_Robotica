@@ -61,6 +61,8 @@ class Ui_Dialog(object):
         self.Logo = QtWidgets.QLabel(Dialog)
         self.Logo.setGeometry(QtCore.QRect(280, 650, 431, 231))
         self.Logo.setText("")
+        self.Logo.setPixmap(QtGui.QPixmap("/home/pi/Documents/Electiva_Robotica/Taller 2/logo-ecci.png"))
+        self.Logo.setScaledContents(True)
         self.Logo.setObjectName("Logo")
         self.label_7 = QtWidgets.QLabel(Dialog)
         self.label_7.setGeometry(QtCore.QRect(10, 740, 291, 51))
@@ -242,6 +244,7 @@ class Ui_Dialog(object):
         self.Img_gota = QtWidgets.QLabel(self.groupBox)
         self.Img_gota.setGeometry(QtCore.QRect(10, 10, 311, 281))
         self.Img_gota.setText("")
+        self.Img_gota.setScaledContents(True)
         self.Img_gota.setObjectName("Img_gota")
         self.groupBox_8 = QtWidgets.QGroupBox(Dialog)
         self.groupBox_8.setGeometry(QtCore.QRect(390, 330, 331, 301))
@@ -250,6 +253,7 @@ class Ui_Dialog(object):
         self.Img_posicion = QtWidgets.QLabel(self.groupBox_8)
         self.Img_posicion.setGeometry(QtCore.QRect(10, 10, 311, 281))
         self.Img_posicion.setText("")
+        self.Img_posicion.setScaledContents(True)
         self.Img_posicion.setObjectName("Img_posicion")
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(19, GPIO.OUT)
@@ -261,12 +265,9 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.Gota.clicked.connect(self.R_gota)
         self.Bot_Nombre.clicked.connect(self.save_as_image)
-        self.Cargar_imagen.clicked.connect(self.cargar_imagen)
-
-        
-
+        self.Carro.currentIndexChanged.connect(self.cargar_imagen)
         self.imagen_cargada = None
-        
+       
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -360,29 +361,37 @@ class Ui_Dialog(object):
     def cargar_imagen(self):
         func_index = self.Carro.currentIndex()
         if func_index == 1:
-            filename = "Chevrolet.jpeg"
+            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Chevroletmin.jpeg"
         elif func_index == 2:
-            filename = "Renault.jpeg"
+            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Renaultmin.jpeg"
         elif func_index == 3:
-            filename = "Kia.jpeg"
+            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Kiamin.jpeg"
         elif func_index == 4:
-            filename = "Mercedes.jpeg"
+            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Mercedesmin.jpeg"
+        elif func_index == 0:
+            self.imagen_cargada is not None
         if filename:
             self.imagen_cargada = cv2.imread(filename)
-            self.mostrar_imagen(self.imagen_cargada)
-            self.detectar_contornos()
+            if self.imagen_cargada is not None:
+                self.mostrar_imagen(self.imagen_cargada)
+                self.detectar_contornos()
+            else:
+                print("Error: No se pudo cargar la imagen.")
+        else:
+            print("Error: No se seleccionó un archivo de imagen.")
+        
 
     def mostrar_imagen(self, imagen):
 
         imagen = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
+
         h, w, ch = imagen.shape
         bytesPerLine = ch * w
         qImg = QtGui.QImage(imagen.data, w, h, bytesPerLine, QtGui.QImage.Format_RGB888)
         pixmap = QtGui.QPixmap.fromImage(qImg)
-        self.Imagen.setPixmap(pixmap)
+        self.Img_gota.setPixmap(pixmap)
 
     def detectar_contornos(self):
-        print("Detectar contornos")
         if self.imagen_cargada is not None:
             imagen_gris = cv2.cvtColor(self.imagen_cargada, cv2.COLOR_BGR2GRAY)
             _, thresh = cv2.threshold(imagen_gris, 127, 255, 0)
@@ -394,30 +403,95 @@ class Ui_Dialog(object):
             # Iterar sobre los puntos del contorno
                 for punto in contorno:
                     x, y = punto[0]  # Obtener las coordenadas X y Y del punto
+                    y=round((y/10)+3,1)
+                    x=round((x/10)+3,1)
                     x_coords.append(x)
                     y_coords.append(y)
-                    y_coords_invertidos = [self.imagen_cargada.shape[0] - y for y in y_coords]
+                y_coords_invertidos = [(self.imagen_cargada.shape[0]-55) - y for y in y_coords]
+                coordenadas_ordenadas = []
+                for i, y in enumerate(y_coords_ordenadas):
+                    x = x_coords[y_coords.index(y)]  # Obtener la coordenada X correspondiente
+                    coordenadas_ordenadas.append((x, y))
 
-                    print("Coordenada X:", x, "Coordenada Y:", y)
-            # Create a plot to show the coordinates
+                # Mostrar coordenadas ordenadas
+                print("Coordenadas ordenadas:")
+                for i, coordenada in enumerate(coordenadas_ordenadas):
+                    x, y = coordenada
+                    print(f"Coordenada {i + 1}:")
+                    print(f"\tCoordenada X: {x}")
+                    print(f"\tCoordenada Y: {y}")
+            c=len(y_coords_invertidos)
+
             plt.figure()
             plt.plot(x_coords, y_coords_invertidos, 'bo')  # Plot coordinates as blue circles
             plt.xlabel('Coordenada X')
             plt.ylabel('Coordenada Y')
             plt.title('Puntos del Contorno')
             plt.show()
+            
+            Puntosx=[]
+            Puntosy=[]
+            thetax=[]
+            thetay=[]
+            P1toP2x=[]
+            P1toP2y=[]
+            n=2
+            m=len(x_coords)
+            d = numpy.zeros((3,m))
+            fig1 = plt.figure().add_subplot(projection='3d')
+            fig1.set_xlabel('X')
+            fig1.set_ylabel('Y')
+            fig1.set_zlabel('Z')
+            fig1.set_xlim(-19, 19)
+            fig1.set_ylim(-19, 19)
+            fig1.set_zlim(-19, 19)
+            [theta1_i, theta2_i] = inversa_2R(l1,l2,12,5.5)
+            print(np.rad2deg(theta1_i), "   ", np.rad2deg(theta2_i))
+            thetay.append(theta2_i)
+            thetax.append(theta1_i)
+            
+            for i in range(0,m):
+                [theta1_i, theta2_i] = inversa_2R(l1,l2,x_coords[i],y_coords_invertidos[i])
+                thetay.append(theta2_i)
+                thetax.append(theta1_i)
+                print(np.rad2deg(thetax),"X:", x_coords[i], "InvY:", np.rad2deg(thetay[i]),"y:", y_coords_invertidos[i])
+
+            for i in range(0,m):
+                MTH = plot_1(l1,l2,thetax[i],thetay[i])
+                d[:,i] =  MTH.t    
+                fig1.plot(d[0,i],d[1,i],d[2,i],'.b')
+                ang1 = np.rad2deg(theta1_i)
+                ang2 = np.rad2deg(theta2_i)
+
+                duty1 = abs(ang1) / 18.0 + 2.5  # Calculate duty cycle for angle 1
+                duty2 = abs(ang2) / 18.0 + 2.5  # Calculate duty cycle for angle 2
+                self.servo1.start(duty1)
+                self.servo2.start(duty2)
+                
+            v=len(thetax)
+
+           
+            # for i in range (0,v):
+                
+            #     ang1 = np.rad2deg(thetax[i])
+            #     ang2 = np.rad2deg(thetay[i])
+
+            #     duty1 = abs(ang1) / 18.0 + 2.5  # Calculate duty cycle for angle 1
+            #     duty2 = abs(ang2) / 18.0 + 2.5  # Calculate duty cycle for angle 2
+            #     self.servo1.start(duty1)
+            #     self.servo2.start(duty2)
                     
-            self.mostrar_imagen(imagen_con_contornos)
             # Configuración del gráfico
+            
 
     def save_as_image(self, Dialog):
         print ("Creando imagen")
         nombre = self.Nombre.toPlainText()
-        pixmap = QPixmap(200, 100)  # Tamaño de la imagen a crear
+        pixmap = QPixmap(100, 70)  # Tamaño de la imagen a crear
         pixmap.fill(QtGui.QColor("white"))  # Rellenar la imagen con color blanco
         painter = QtGui.QPainter(pixmap)
         font = painter.font()  # Obtener la fuente actual
-        font.setPointSize(30)  # Establecer el tamaño de la fuente
+        font.setPointSize(10)  # Establecer el tamaño de la fuente
         painter.setFont(font)  # Aplicar la fuente al pintor
         painter.drawText(10, 50, nombre)  # Dibujar texto en la imagen
         painter.end()

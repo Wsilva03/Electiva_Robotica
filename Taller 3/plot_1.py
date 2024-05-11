@@ -13,6 +13,4 @@ def plot_1(l1,l2,theta1,theta2):
     Robot = DHRobot(R, name='Wall-e')
     Robot.plot([q1, q2], backend='pyplot', block=False, limits=[-19, 19, -19, 19, -19, 19])  # Plot en 3D
     MTH = Robot.fkine([q1, q2])
-    print(MTH)
-    print(f"Roll, Pitch, Yaw = {tr2rpy(MTH.R, 'deg', 'zyx')}")
     return MTH
