@@ -262,6 +262,7 @@ class Ui_Dialog(object):
         self.Gota.clicked.connect(self.R_gota)
         self.Bot_Nombre.clicked.connect(self.save_as_image)
         self.Cargar_imagen.clicked.connect(self.cargar_imagen)
+        self.Esteban.clicked.connect(self.Nombre)
 
         
 
