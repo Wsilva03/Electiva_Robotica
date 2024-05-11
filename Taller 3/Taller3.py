@@ -8,6 +8,7 @@ from spatialmath.base import tr2rpy
 import RPi.GPIO as GPIO
 import tempfile
 import math
+import cv2
 import numpy
 import numpy as np
 import sys
@@ -260,6 +261,11 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.Gota.clicked.connect(self.R_gota)
         self.Bot_Nombre.clicked.connect(self.save_as_image)
+        self.Cargar_imagen.clicked.connect(self.cargar_imagen)
+
+        
+
+        self.imagen_cargada = None
         
 
     def retranslateUi(self, Dialog):
@@ -351,17 +357,59 @@ class Ui_Dialog(object):
             self.servo1.start(duty1)
             self.servo2.start(duty2)
 
-        
+    def cargar_imagen(self):
+        func_index = self.Carro.currentIndex()
+        if func_index == 1:
+            filename = "Chevrolet.jpeg"
+        elif func_index == 2:
+            filename = "Renault.jpeg"
+        elif func_index == 3:
+            filename = "Kia.jpeg"
+        elif func_index == 4:
+            filename = "Mercedes.jpeg"
+        if filename:
+            self.imagen_cargada = cv2.imread(filename)
+            self.mostrar_imagen(self.imagen_cargada)
+            self.detectar_contornos()
 
+    def mostrar_imagen(self, imagen):
 
+        imagen = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
+        h, w, ch = imagen.shape
+        bytesPerLine = ch * w
+        qImg = QtGui.QImage(imagen.data, w, h, bytesPerLine, QtGui.QImage.Format_RGB888)
+        pixmap = QtGui.QPixmap.fromImage(qImg)
+        self.Imagen.setPixmap(pixmap)
 
+    def detectar_contornos(self):
+        print("Detectar contornos")
+        if self.imagen_cargada is not None:
+            imagen_gris = cv2.cvtColor(self.imagen_cargada, cv2.COLOR_BGR2GRAY)
+            _, thresh = cv2.threshold(imagen_gris, 127, 255, 0)
+            contours, jerarquia = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            imagen_con_contornos = cv2.drawContours(self.imagen_cargada.copy(), contours, -1, (0, 255, 0), 2)
+            x_coords = []
+            y_coords = []
+            for contorno in contours:
+            # Iterar sobre los puntos del contorno
+                for punto in contorno:
+                    x, y = punto[0]  # Obtener las coordenadas X y Y del punto
+                    x_coords.append(x)
+                    y_coords.append(y)
+                    y_coords_invertidos = [self.imagen_cargada.shape[0] - y for y in y_coords]
 
+                    print("Coordenada X:", x, "Coordenada Y:", y)
+            # Create a plot to show the coordinates
+            plt.figure()
+            plt.plot(x_coords, y_coords_invertidos, 'bo')  # Plot coordinates as blue circles
+            plt.xlabel('Coordenada X')
+            plt.ylabel('Coordenada Y')
+            plt.title('Puntos del Contorno')
+            plt.show()
+                    
+            self.mostrar_imagen(imagen_con_contornos)
+            # Configuración del gráfico
 
-
-        # plt.savefig("Ejemplo1.png")
-        # self.Robot.setPixmap(QtGui.QPixmap("Ejemplo1.png"))
-
-        
     def save_as_image(self, Dialog):
         print ("Creando imagen")
         nombre = self.Nombre.toPlainText()

@@ -183,8 +183,15 @@ class Ui_MainWindow(object):
 
             _, thresh = cv2.threshold(imagen_gris, 127, 255, 0)
 
-            _, contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+            for contour in contours:
+                # Obtener las coordenadas del contorno
+                x, y, w, h = cv2.boundingRect(contour)
+                print("Coordenadas del contorno: x={}, y={}, w={}, h={}".format(x, y, w, h))
+
+
+        
             imagen_con_contornos = cv2.drawContours(self.imagen_cargada.copy(), contours, -1, (0, 255, 0), 2)
 
             self.mostrar_imagen(imagen_con_contornos)
