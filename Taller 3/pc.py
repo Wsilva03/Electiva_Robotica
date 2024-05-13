@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from roboticstoolbox import RevoluteDH, DHRobot
 from spatialmath.base import tr2rpy
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import tempfile
 import math
 import cv2
@@ -14,7 +14,6 @@ import numpy as np
 import sys
 from inversa_2R import *
 from plot_1 import *
-from Servos import *
 from PyQt5.QtWidgets import QApplication, QTextEdit, QLabel, QDialog, QVBoxLayout, QPushButton
 from PyQt5.QtGui import QImage, QPixmap  # Import both QImage and QPixmap
 
@@ -255,25 +254,17 @@ class Ui_Dialog(object):
         self.Img_posicion.setText("")
         self.Img_posicion.setScaledContents(True)
         self.Img_posicion.setObjectName("Img_posicion")
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(19, GPIO.OUT)
-        GPIO.setup(16, GPIO.OUT)
-        self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
-        self.servo2 = GPIO.PWM(16, 50)
+        # GPIO.setmode(GPIO.BCM)
+        # GPIO.setup(19, GPIO.OUT)
+        # GPIO.setup(16, GPIO.OUT)
+        # self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
+        # self.servo2 = GPIO.PWM(16, 50)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.Gota.clicked.connect(self.R_gota)
         self.Bot_Nombre.clicked.connect(self.save_as_image)
-<<<<<<< HEAD
         self.Carro.currentIndexChanged.connect(self.cargar_imagen)
-=======
-        self.Cargar_imagen.clicked.connect(self.cargar_imagen)
-        self.Esteban.clicked.connect(self.Nombre)
-
-        
-
->>>>>>> 32c8eca41b7e5f8aa69f5660487ee0938eff0949
         self.imagen_cargada = None
        
 
@@ -369,13 +360,13 @@ class Ui_Dialog(object):
     def cargar_imagen(self):
         func_index = self.Carro.currentIndex()
         if func_index == 1:
-            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Chevroletmin.jpeg"
+            filename = "E:/Informacion/u/Electiva Robotica/Electiva_Robotica/Taller 3/Chevroletmin.jpeg"
         elif func_index == 2:
-            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Renaultmin.jpeg"
+            filename = "E:/Informacion/u/Electiva Robotica/Electiva_Robotica/Taller 3/Renaultmin.jpeg"
         elif func_index == 3:
-            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Kiamin.jpeg"
+            filename = "E:/Informacion/u/Electiva Robotica/Electiva_Robotica/Taller 3/Kiamin.jpeg"
         elif func_index == 4:
-            filename = "/home/pi/Documents/Electiva_Robotica/Taller 3/Mercedesmin.jpeg"
+            filename = "E:/Informacion/u/Electiva Robotica/Electiva_Robotica/Taller 3/Mercedesmin.jpeg"
         elif func_index == 0:
             self.imagen_cargada is not None
         if filename:
@@ -403,7 +394,7 @@ class Ui_Dialog(object):
         if self.imagen_cargada is not None:
             imagen_gris = cv2.cvtColor(self.imagen_cargada, cv2.COLOR_BGR2GRAY)
             _, thresh = cv2.threshold(imagen_gris, 127, 255, 0)
-            contours, jerarquia = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, jerarquia = cv2.findContours(thresh,cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
             imagen_con_contornos = cv2.drawContours(self.imagen_cargada.copy(), contours, -1, (0, 255, 0), 2)
             x_coords = []
             y_coords = []
@@ -411,27 +402,16 @@ class Ui_Dialog(object):
             # Iterar sobre los puntos del contorno
                 for punto in contorno:
                     x, y = punto[0]  # Obtener las coordenadas X y Y del punto
-                    y=round((y/10)+3,1)
-                    x=round((x/10)+3,1)
+                    y=(y/10)+3
+                    x=(x/10)+3
                     x_coords.append(x)
                     y_coords.append(y)
-                y_coords_invertidos = [(self.imagen_cargada.shape[0]-55) - y for y in y_coords]
-                coordenadas_ordenadas = []
-                for i, y in enumerate(y_coords_ordenadas):
-                    x = x_coords[y_coords.index(y)]  # Obtener la coordenada X correspondiente
-                    coordenadas_ordenadas.append((x, y))
-
-                # Mostrar coordenadas ordenadas
-                print("Coordenadas ordenadas:")
-                for i, coordenada in enumerate(coordenadas_ordenadas):
-                    x, y = coordenada
-                    print(f"Coordenada {i + 1}:")
-                    print(f"\tCoordenada X: {x}")
-                    print(f"\tCoordenada Y: {y}")
-            c=len(y_coords_invertidos)
+                    print("Coordenada X:", x, "Coordenada Y:", y)
+                
+            c=len(y_coords)
 
             plt.figure()
-            plt.plot(x_coords, y_coords_invertidos, 'bo')  # Plot coordinates as blue circles
+            plt.plot(x_coords, y_coords, 'bo')  # Plot coordinates as blue circles
             plt.xlabel('Coordenada X')
             plt.ylabel('Coordenada Y')
             plt.title('Puntos del Contorno')
@@ -444,7 +424,15 @@ class Ui_Dialog(object):
             P1toP2x=[]
             P1toP2y=[]
             n=2
+            #for i in range(0,c-1):
+            #     Puntosx = numpy.linspace(x_coords[i], x_coords[i+1], n)
+            #     Puntosy = numpy.linspace(y_coords_invertidos[i], y_coords_invertidos[i+1], n)
+            #     P1toP2x.append(Puntosx)
+            #     P1toP2y.append(Puntosy)
+            # P1toP2x = numpy.concatenate(P1toP2x)
+            # P1toP2y = numpy.concatenate(P1toP2y)
             m=len(x_coords)
+            print(m)
             d = numpy.zeros((3,m))
             fig1 = plt.figure().add_subplot(projection='3d')
             fig1.set_xlabel('X')
@@ -453,28 +441,14 @@ class Ui_Dialog(object):
             fig1.set_xlim(-19, 19)
             fig1.set_ylim(-19, 19)
             fig1.set_zlim(-19, 19)
-            [theta1_i, theta2_i] = inversa_2R(l1,l2,12,5.5)
-            print(np.rad2deg(theta1_i), "   ", np.rad2deg(theta2_i))
-            thetay.append(theta2_i)
-            thetax.append(theta1_i)
             
             for i in range(0,m):
-                [theta1_i, theta2_i] = inversa_2R(l1,l2,x_coords[i],y_coords_invertidos[i])
+                [theta1_i, theta2_i] = inversa_2R(l1,l2,x_coords[i],y_coords[i])
                 thetay.append(theta2_i)
                 thetax.append(theta1_i)
-                print(np.rad2deg(thetax),"X:", x_coords[i], "InvY:", np.rad2deg(thetay[i]),"y:", y_coords_invertidos[i])
-
-            for i in range(0,m):
                 MTH = plot_1(l1,l2,thetax[i],thetay[i])
                 d[:,i] =  MTH.t    
                 fig1.plot(d[0,i],d[1,i],d[2,i],'.b')
-                ang1 = np.rad2deg(theta1_i)
-                ang2 = np.rad2deg(theta2_i)
-
-                duty1 = abs(ang1) / 18.0 + 2.5  # Calculate duty cycle for angle 1
-                duty2 = abs(ang2) / 18.0 + 2.5  # Calculate duty cycle for angle 2
-                self.servo1.start(duty1)
-                self.servo2.start(duty2)
                 
             v=len(thetax)
 

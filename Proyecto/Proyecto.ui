@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
+    <width>719</width>
     <height>847</height>
    </rect>
   </property>
@@ -46,7 +46,7 @@
    <property name="geometry">
     <rect>
      <x>77</x>
-     <y>694</y>
+     <y>710</y>
      <width>291</width>
      <height>51</height>
     </rect>
@@ -68,8 +68,8 @@
   <widget class="QLabel" name="label_11">
    <property name="geometry">
     <rect>
-     <x>57</x>
-     <y>654</y>
+     <x>50</x>
+     <y>640</y>
      <width>291</width>
      <height>51</height>
     </rect>
@@ -115,7 +115,7 @@
    <property name="geometry">
     <rect>
      <x>57</x>
-     <y>734</y>
+     <y>750</y>
      <width>291</width>
      <height>51</height>
     </rect>
@@ -138,7 +138,7 @@
    <property name="geometry">
     <rect>
      <x>134</x>
-     <y>775</y>
+     <y>790</y>
      <width>81</width>
      <height>51</height>
     </rect>
@@ -180,7 +180,7 @@
     <number>15</number>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="Logo">
    <property name="geometry">
     <rect>
      <x>380</x>
@@ -193,7 +193,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QSlider" name="horizontalSlider">
+  <widget class="QSlider" name="Motor1">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -206,7 +206,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QSlider" name="horizontalSlider_2">
+  <widget class="QSlider" name="Motor2">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -219,7 +219,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QSlider" name="horizontalSlider_3">
+  <widget class="QSlider" name="Motor3">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -292,7 +292,7 @@
     <string>Motor #3</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_9">
+  <widget class="QLabel" name="Angulo_M1">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -312,7 +312,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_10">
+  <widget class="QLabel" name="Angulo_M2">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -332,7 +332,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_16">
+  <widget class="QLabel" name="Angulo_M2_2">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -352,7 +352,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="Grip_abrir">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -376,7 +376,7 @@ color: rgb(255, 255, 255);</string>
     <string>Abrir</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="Grip_cerrar">
    <property name="geometry">
     <rect>
      <x>200</x>
@@ -538,7 +538,7 @@ color: rgb(255, 255, 255);</string>
      <string>Modo: Semiautomático</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="Semi_iniciar">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -562,7 +562,7 @@ color: rgb(255, 255, 255);</string>
      <string>Iniciar</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit_3">
+   <widget class="QTextEdit" name="Pos_Z">
     <property name="geometry">
      <rect>
       <x>123</x>
@@ -635,7 +635,7 @@ color: rgb(255, 255, 255);</string>
      <string>Pos Y</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTextEdit" name="Pos_X">
     <property name="geometry">
      <rect>
       <x>123</x>
@@ -648,7 +648,7 @@ color: rgb(255, 255, 255);</string>
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit_2">
+   <widget class="QTextEdit" name="Pos_Y">
     <property name="geometry">
      <rect>
       <x>123</x>
@@ -666,7 +666,7 @@ color: rgb(255, 255, 255);</string>
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>370</y>
+     <y>340</y>
      <width>341</width>
      <height>151</height>
     </rect>
@@ -694,7 +694,7 @@ color: rgb(255, 255, 255);</string>
      <string>Modo: Automatico</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="Auto_Iniciar">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -731,7 +731,7 @@ color: rgb(255, 255, 255);</string>
    <property name="title">
     <string/>
    </property>
-   <widget class="QLabel" name="label_24">
+   <widget class="QLabel" name="Img">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -745,6 +745,77 @@ color: rgb(255, 255, 255);</string>
     </property>
    </widget>
   </widget>
+  <widget class="QLabel" name="label_25">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>680</y>
+     <width>241</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Nicolás Martínez Guzmán - 70020</string>
+   </property>
+   <property name="margin">
+    <number>15</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="Encender">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>510</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(0, 85, 255);
+color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>Encender</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="Apagar">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>510</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(0, 85, 255);
+color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>Apagar</string>
+   </property>
+  </widget>
   <zorder>groupBox_2</zorder>
   <zorder>groupBox</zorder>
   <zorder>label</zorder>
@@ -754,20 +825,23 @@ color: rgb(255, 255, 255);</string>
   <zorder>label_14</zorder>
   <zorder>label_13</zorder>
   <zorder>label_12</zorder>
-  <zorder>label_2</zorder>
-  <zorder>horizontalSlider</zorder>
-  <zorder>horizontalSlider_2</zorder>
-  <zorder>horizontalSlider_3</zorder>
+  <zorder>Logo</zorder>
+  <zorder>Motor1</zorder>
+  <zorder>Motor2</zorder>
+  <zorder>Motor3</zorder>
   <zorder>label_6</zorder>
   <zorder>label_7</zorder>
   <zorder>label_8</zorder>
-  <zorder>label_9</zorder>
-  <zorder>label_10</zorder>
-  <zorder>label_16</zorder>
-  <zorder>pushButton_2</zorder>
-  <zorder>pushButton_3</zorder>
+  <zorder>Angulo_M1</zorder>
+  <zorder>Angulo_M2</zorder>
+  <zorder>Angulo_M2_2</zorder>
+  <zorder>Grip_abrir</zorder>
+  <zorder>Grip_cerrar</zorder>
   <zorder>groupBox_4</zorder>
   <zorder>groupBox_5</zorder>
+  <zorder>label_25</zorder>
+  <zorder>Encender</zorder>
+  <zorder>Apagar</zorder>
  </widget>
  <resources/>
  <connections/>

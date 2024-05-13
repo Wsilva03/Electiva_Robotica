@@ -193,7 +193,32 @@ class Ui_MainWindow(object):
 
         
             imagen_con_contornos = cv2.drawContours(self.imagen_cargada.copy(), contours, -1, (0, 255, 0), 2)
+            bordes = cv2.Canny(imagen_gris, 10, 150)
+            #_, bordes = cv2.threshold(imagen_gris, 127, 255, 0)
+            contornos, _ = cv2.findContours(bordes, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+            # Inicializar lista de coordenadas
+            coordenadas = []
+
+            # Recorrer cada contorno
+            for contorno in contornos:
+                # Aproximar el contorno a una forma poligonal
+                aproximacion = cv2.approxPolyDP(contorno, 0.01 * cv2.arcLength(contorno, True), True)
+
+                # Si la aproximación tiene 4 vértices, es probable que sea el logo de Renault
+                if len(aproximacion) == 4:
+                    # Obtener las coordenadas de los vértices
+                    for vertice in aproximacion:
+                        coordenadas.append((vertice[0][0], vertice[0][1]))
+            coordenadas_ordenadas = sorted(coordenadas, key=lambda x: y * 1000 + x)
+
+            # Ordenar las coordenadas en sentido de las agujas del reloj (parte superior izquierda, superior derecha, inferior derecha, inferior izquierda)
+            coordenadas_ordenadas = sorted(coordenadas, key=lambda x: y * 1000 + x)
+            for i, coordenada in enumerate(coordenadas_ordenadas):
+                x, y = coordenada
+                print(f"Coordenada {i + 1}:")
+                print(f"\tCoordenada X: {x}")
+                print(f"\tCoordenada Y: {y}")
             self.mostrar_imagen(imagen_con_contornos)
 
         else:
