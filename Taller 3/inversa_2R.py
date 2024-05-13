@@ -19,4 +19,4 @@ def inversa_2R(l1, l2, Px, Py):
     alpha = math.atan2(Py, Px)
     phi = math.atan2(l2*sen_theta2, l1+l2*cos_theta2)
     theta1 = alpha - phi
-    return abs(theta1), abs(theta2)
+    return theta1, theta2
