@@ -265,15 +265,12 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.Gota.clicked.connect(self.R_gota)
         self.Bot_Nombre.clicked.connect(self.save_as_image)
-<<<<<<< HEAD
         self.Carro.currentIndexChanged.connect(self.cargar_imagen)
-=======
         self.Cargar_imagen.clicked.connect(self.cargar_imagen)
         self.Esteban.clicked.connect(self.Nombre)
 
         
 
->>>>>>> 32c8eca41b7e5f8aa69f5660487ee0938eff0949
         self.imagen_cargada = None
        
 
