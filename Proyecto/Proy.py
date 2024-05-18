@@ -4,6 +4,7 @@ from RpiMotorLib import RpiMotorLib
 import time
 import math
 import numpy
+import numpy as np
 from sympy import *
 from InverseKinematics3R import *
 from ForwardKinematics3R import *
@@ -103,10 +104,12 @@ class Ui_Dialog(object):
         self.Motor1.setMaximum(360)#Modificar
         self.Motor2.setOrientation(QtCore.Qt.Horizontal)
         self.Motor2.setObjectName("Motor2")
+        self.Motor2.setMaximum(360)#Modificar
         self.Motor3 = QtWidgets.QSlider(Dialog)
         self.Motor3.setGeometry(QtCore.QRect(120, 200, 160, 22))
         self.Motor3.setOrientation(QtCore.Qt.Horizontal)
         self.Motor3.setObjectName("Motor3")
+        self.Motor3.setMaximum(360)#Modificar
         self.label_6 = QtWidgets.QLabel(Dialog)
         self.label_6.setGeometry(QtCore.QRect(40, 120, 61, 21))
         font = QtGui.QFont()
@@ -149,15 +152,15 @@ class Ui_Dialog(object):
         self.Angulo_M2.setFont(font)
         self.Angulo_M2.setText("")
         self.Angulo_M2.setObjectName("Angulo_M2")
-        self.Angulo_M2_2 = QtWidgets.QLabel(Dialog)
-        self.Angulo_M2_2.setGeometry(QtCore.QRect(290, 200, 61, 21))
+        self.Angulo_M3 = QtWidgets.QLabel(Dialog)
+        self.Angulo_M3.setGeometry(QtCore.QRect(290, 200, 61, 21))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.Angulo_M2_2.setFont(font)
-        self.Angulo_M2_2.setText("")
-        self.Angulo_M2_2.setObjectName("Angulo_M2_2")
+        self.Angulo_M3.setFont(font)
+        self.Angulo_M3.setText("")
+        self.Angulo_M3.setObjectName("Angulo_M3")
         self.Grip_abrir = QtWidgets.QPushButton(Dialog)
         self.Grip_abrir.setGeometry(QtCore.QRect(120, 250, 71, 31))
         font = QtGui.QFont()
@@ -352,7 +355,7 @@ class Ui_Dialog(object):
         self.label_8.raise_()
         self.Angulo_M1.raise_()
         self.Angulo_M2.raise_()
-        self.Angulo_M2_2.raise_()
+        self.Angulo_M3.raise_()
         self.Grip_abrir.raise_()
         self.Grip_cerrar.raise_()
         self.groupBox_4.raise_()
@@ -362,16 +365,19 @@ class Ui_Dialog(object):
         self.Apagar.raise_()
         #GPIO.setmode(GPIO.BCM)
         GPIO.setup(EN_pin,GPIO.OUT)
+        GPIO.setup(19, GPIO.OUT)
+        self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
+        self.servo1.start(0)
         
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        self.Motor1.sliderMoved.connect(self.update_motor1_angle)
-        self.Motor2.sliderMoved.connect(self.update_motor2_angle)
-        self.Motor3.sliderMoved.connect(self.update_motor3_angle)
+        self.Motor1.sliderMoved.connect(self.M1_slider)
+        self.Motor2.sliderMoved.connect(self.M2_slider)
+        self.Motor3.sliderMoved.connect(self.M3_slider)
         self.Semi_iniciar.clicked.connect(self.Semi_auto)
         self.Auto_Iniciar.clicked.connect(self.automatico)
-        self.Apagar.clicked.connect(self.apagar)
-        self.Encender.clicked.connect(self.Encender)
+        # self.Apagar.clicked.connect(self.Bot_apagar)
+        # self.Encender.clicked.connect(self.Bot_Encender)
         self.Grip_abrir.clicked.connect(self.Grip_ab)
         self.Grip_cerrar.clicked.connect(self.Grip_ce)
 
@@ -404,7 +410,28 @@ class Ui_Dialog(object):
         self.label_25.setText(_translate("Dialog", "Nicolás Martínez Guzmán - 70020"))
         self.Encender.setText(_translate("Dialog", "Encender"))
         self.Apagar.setText(_translate("Dialog", "Apagar"))
-
+    def M1_slider(self, value):
+        global previous_angle_M1, previous_angle_M2, previous_angle_M3
+        q1 = np.deg2rad(value)
+        q2 = np.deg2rad(previous_angle_M2)
+        q3 = np.deg2rad(previous_angle_M3)
+        self.update_motor1_angle(value)
+        previous_angle_M1 = value
+        MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
+    def M2_slider(self, value):
+        q2 = np.deg2rad(value)
+        q1 = np.deg2rad(previous_angle_M1)
+        q3 = np.deg2rad(previous_angle_M3)
+        self.update_motor2_angle(value)
+        previous_angle_M2 = value
+        MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
+    def M3_slider(self, value):
+        q3 = np.deg2rad(value)
+        q2 = np.deg2rad(previous_angle_M2)
+        q1 = np.deg2rad(previous_angle_M1)
+        self.update_motor3_angle(value)
+        previous_angle_M3 = value
+        MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
     def update_motor1_angle(self, value):
         # Actualizar el ángulo en el QLabel correspondiente
         global previous_angle_M1
@@ -488,61 +515,41 @@ class Ui_Dialog(object):
         previous_angle_M3 = angle
     def Semi_auto(self, value):
         # Cinemática inversa
-        Px = float(self.Pos_X.toPlainText())
-        Py = float(self.Pos_Y.toPlainText())
+        Px = -float(self.Pos_X.toPlainText())
+        Py = -float(self.Pos_Y.toPlainText())
         Pz = float(self.Pos_Z.toPlainText())
 
-        e = sqrt(Px**2+Py**2)
-        c = Pz - l1
-        b = sqrt(e**2+c**2)
-        # Theta 1
-        theta1 = float(atan2(Py,Px))
-        print(f'theta 1 = {numpy.rad2deg(theta1):.4f}')
-        # Theta 3
-        cos_theta3 = (b**2-l2**2-l3**2)/(2*l2*l3)
-        sen_theta3 = sqrt(1-(cos_theta3)**2)
-        theta3 = float(atan2(sen_theta3, cos_theta3))
-        print(f'theta 3 = {numpy.rad2deg(theta3):.4f}')
-        # Theta 2
-        alpha = math.atan2(c,e)
-        phi = math.atan2(l3*sen_theta3, l2+l3*cos_theta3)
-        theta2 = float(alpha - phi)
-        if theta2 <= -numpy.pi:
-            theta2 = (2*numpy.pi)+theta2
-
-        print(f'theta 2 = {numpy.rad2deg(theta2):.4f}')
+        [theta1, theta2,theta3] = InverseKinematics3R(l1,l2,l3,Px,Py,Pz)
+        self.Angulo_M1.setText(str(np.rad2deg(theta1)))
+        self.Angulo_M2.setText(str(np.rad2deg(theta2)))
+        self.Angulo_M3.setText(str(np.rad2deg(theta3)))
         #-------------
 
         q1 = theta1
         q2 = theta2
         q3 = theta3
 
-        R = []
-        R.append(RevoluteDH(d=l1, alpha=numpy.pi/2, a=0, offset=0))
-        R.append(RevoluteDH(d=0, alpha=0, a=l2, offset=0))
-        R.append(RevoluteDH(d=0, alpha=0, a=l3, offset=0))
-
-        Robot = DHRobot(R, name='Bender')
-        print(Robot)
-
-        Robot.teach([q1, q2, q3], 'rpy/zyx', limits=[-30,30,-30,30,-30,30])
-
-        #zlim([-15,30]);
-
-        MTH = Robot.fkine([q1,q2,q3])
-        print(MTH)
-        print(f"Roll, Pitch, Yaw = {tr2rpy(MTH.R, 'deg', 'zyx')}")
-
+        MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
     def automatico(self, value):
-	    Print("Falta")
+	    print("Falta")
+
     def apagar(self, value):
-        Print("Falta")
+        GPIO.cleanup() # clear GPIO allocations after run
+        print("Falta")
+
     def Encender(self, value):
-        Print("Falta")
+        print("Falta")
+
+        
     def Grip_ab(self, value):
-        Print("Falta")
+        self.servo1.ChangeDutyCycle(0)
+        duty = "angle" / 18.0 + 2.5
+        self.servo1.ChangeDutyCycle(duty)
+        
     def Grip_ce(self, value):
-        Print("Falta")
+        self.servo1.ChangeDutyCycle(0)
+        duty = "angle" / 18.0 + 2.5
+        self.servo1.ChangeDutyCycle(duty)
 
 if __name__ == "__main__":
     import sys

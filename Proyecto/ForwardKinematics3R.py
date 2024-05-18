@@ -14,7 +14,7 @@ def ForwardKinematics3R(l1,l2,l3,q1,q2,q3):
     Robot = DHRobot(R, name='Bender')
     print(Robot)
 
-    Robot.plot([q1, q2, q3], limits=[-30,30,-30,30,-30,30])
+    Robot.plot([q1, q2, q3], limits=[-90,90,-90,90,-90,90])
 
     #zlim([-15,30]);
 

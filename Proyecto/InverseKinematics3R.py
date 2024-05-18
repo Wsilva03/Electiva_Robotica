@@ -5,7 +5,7 @@ from roboticstoolbox import *
 from spatialmath.base import *
 
 def InverseKinematics3R(l1,l2,l3,Px,Py,Pz):
-    e = sqrt(Px**2+Py**2)
+    e = -sqrt(Px**2+Py**2)
     c = Pz - l1
     b = sqrt(e**2+c**2)
     # Theta 1
@@ -22,8 +22,6 @@ def InverseKinematics3R(l1,l2,l3,Px,Py,Pz):
     theta2 = float(alpha - phi)
     if theta2 <= -numpy.pi:
         theta2 = (2*numpy.pi)+theta2
-
-    print(f'theta 2 = {numpy.rad2deg(theta2):.4f}')
     
     return theta1, theta2, theta3
     
