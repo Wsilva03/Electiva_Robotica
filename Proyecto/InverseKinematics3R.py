@@ -3,8 +3,10 @@ import math
 from sympy import *
 from roboticstoolbox import *
 from spatialmath.base import *
+import nest_asyncio
 
 def InverseKinematics3R(l1,l2,l3,Px,Py,Pz):
+    nest_asyncio.apply()
     e = -sqrt(Px**2+Py**2)
     c = Pz - l1
     b = sqrt(e**2+c**2)

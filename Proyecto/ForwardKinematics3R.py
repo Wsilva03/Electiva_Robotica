@@ -6,9 +6,11 @@ from spatialmath.base import *
 
 def ForwardKinematics3R(l1,l2,l3,q1,q2,q3):
     
+    print(q1, q2, q3)
+    
     R = []
     R.append(RevoluteDH(d=l1, alpha=numpy.pi/2, a=0, offset=0))
-    R.append(RevoluteDH(d=0, alpha=0, a=l2, offset=0))
+    R.append(RevoluteDH(d=0, alpha=numpy.pi/2, a=l2, offset=0))
     R.append(RevoluteDH(d=0, alpha=0, a=l3, offset=0))
 
     Robot = DHRobot(R, name='Bender')

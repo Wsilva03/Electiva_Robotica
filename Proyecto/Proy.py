@@ -13,16 +13,19 @@ import matplotlib.pyplot as plt
 direction_M1= 5 # Direction (DIR) GPIO Pin
 step_M1 = 4 # Step GPIO Pin
 EN_pin = 21 # enable pin (LOW to enable)
-direction_M2= 6 # Direction (DIR) GPIO Pin
-step_M2 = 17 # Step GPIO Pin
-direction_M3= 26 # Direction (DIR) GPIO Pin
-step_M3 = 27 # Step GPIO Pin
+direction_M3= 6 # Direction (DIR) GPIO Pin
+step_M3 = 17 # Step GPIO Pin
+direction_M2= 26 # Direction (DIR) GPIO Pin
+step_M2 = 27 # Step GPIO Pin
 previous_angle_M1 = 0
-previous_angle_M2 = 0
+previous_angle_M2 = 180
 previous_angle_M3 = 0
 mymotortest_M1 = RpiMotorLib.A4988Nema(direction_M1, step_M1, (EN_pin,EN_pin,EN_pin), "A4988")
 mymotortest_M2 = RpiMotorLib.A4988Nema(direction_M2, step_M2, (EN_pin,EN_pin,EN_pin), "A4988")
 mymotortest_M3 = RpiMotorLib.A4988Nema(direction_M3, step_M3, (EN_pin,EN_pin,EN_pin), "A4988")
+IR_SENSOR_PIN1 = 20
+IR_SENSOR_PIN2 = 12
+IR_SENSOR_PIN3 = 22
 
 l1 = 18
 l2 = 16
@@ -368,6 +371,9 @@ class Ui_Dialog(object):
         GPIO.setup(19, GPIO.OUT)
         self.servo1 = GPIO.PWM(19, 50)  # GPIO 19 para Servo 1 con frecuencia de 50Hz
         self.servo1.start(0)
+        GPIO.setup(IR_SENSOR_PIN1, GPIO.IN)
+        GPIO.setup(IR_SENSOR_PIN2, GPIO.IN)
+        GPIO.setup(IR_SENSOR_PIN3, GPIO.IN)
         
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -376,7 +382,7 @@ class Ui_Dialog(object):
         self.Motor3.sliderMoved.connect(self.M3_slider)
         self.Semi_iniciar.clicked.connect(self.Semi_auto)
         self.Auto_Iniciar.clicked.connect(self.automatico)
-        # self.Apagar.clicked.connect(self.Bot_apagar)
+        self.Apagar.clicked.connect(self.Bot_apagar)
         # self.Encender.clicked.connect(self.Bot_Encender)
         self.Grip_abrir.clicked.connect(self.Grip_ab)
         self.Grip_cerrar.clicked.connect(self.Grip_ce)
@@ -417,23 +423,28 @@ class Ui_Dialog(object):
         q3 = np.deg2rad(previous_angle_M3)
         self.update_motor1_angle(value)
         previous_angle_M1 = value
-        MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
+        #MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
     def M2_slider(self, value):
+        global previous_angle_M1, previous_angle_M2, previous_angle_M3
         q2 = np.deg2rad(value)
         q1 = np.deg2rad(previous_angle_M1)
         q3 = np.deg2rad(previous_angle_M3)
         self.update_motor2_angle(value)
         previous_angle_M2 = value
-        MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
+        #MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
     def M3_slider(self, value):
+        global previous_angle_M1, previous_angle_M2, previous_angle_M3
         q3 = np.deg2rad(value)
         q2 = np.deg2rad(previous_angle_M2)
         q1 = np.deg2rad(previous_angle_M1)
         self.update_motor3_angle(value)
         previous_angle_M3 = value
-        MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
+        #MTH = ForwardKinematics3R(l1,l2,l3,q1,q2,q3)
     def update_motor1_angle(self, value):
         # Actualizar el ángulo en el QLabel correspondiente
+        #or GPIO.input(IR_SENSOR_PIN2) == GPIO.LOW or GPIO.input(IR_SENSOR_PIN2) == GPIO.LOW
+        while GPIO.input(IR_SENSOR_PIN1) == GPIO.LOW or GPIO.input(IR_SENSOR_PIN3) == GPIO.LOW:
+            print("Objeto detectado")
         global previous_angle_M1
         self.Angulo_M1.setText(str(value))
         # Calcular el número de pasos necesarios para mover el motor al ángulo deseado
@@ -444,41 +455,44 @@ class Ui_Dialog(object):
 
         # Mover el motor en la dirección apropiada según el cambio de ángulo
         if angle < previous_angle_M1:
-            # Si nos estamos devolviendo, cambiar la dirección
-            mymotortest_M1.motor_go(
-            True, "Full", steps_needed, 0.0005, False, 0.05
-                )
+            sentido=True
         else:
-            # Si no nos estamos devolviendo, mantener la dirección actual
-            mymotortest_M1.motor_go(
-            False, "Full", steps_needed, 0.0005, False, 0.05
-                )
-
-        # Mover el motor a la posición deseada
-        GPIO.output(EN_pin, GPIO.LOW)  # Habilitar el motor
-
-        # Actualizar el ángulo anterior
+            sentido=False
+        if GPIO.input(IR_SENSOR_PIN2) == GPIO.LOW:
+            mymotortest_M1.motor_go(sentido, "Full", steps_needed, 0.01, False, 0.05)#bajar velocidad
+            print("lento")
+        else:
+            mymotortest_M1.motor_go(sentido, "Full", steps_needed, 0.005, False, 0.05)
+            
+        GPIO.output(EN_pin, GPIO.LOW)  
         previous_angle_M1 = angle
     def update_motor2_angle(self, value):
         # Actualizar el ángulo en el QLabel correspondiente
         global previous_angle_M2
+        while GPIO.input(IR_SENSOR_PIN1) == GPIO.LOW or GPIO.input(IR_SENSOR_PIN3) == GPIO.LOW:
+            
+            print("Objeto detenido")
         self.Angulo_M2.setText(str(value))
         # Calcular el número de pasos necesarios para mover el motor al ángulo deseado
         angle = value
-        steps_per_revolution = 1800
-        steps_needed = int(abs(angle - previous_angle_M2) * steps_per_revolution / 360)
+        steps_per_revolution = 600
+        steps_needed = int(abs(angle - previous_angle_M2) * steps_per_revolution / 180)
         GPIO.output(EN_pin, GPIO.LOW)  # Habilitar el motor
 
         # Mover el motor en la dirección apropiada según el cambio de ángulo
         if angle < previous_angle_M2:
-            # Si nos estamos devolviendo, cambiar la dirección
+            
+            sentido=False
+        else:
+            sentido=True
+        if GPIO.input(IR_SENSOR_PIN2) == GPIO.LOW:
             mymotortest_M2.motor_go(
-            True, "Full", steps_needed, 0.0005, False, 0.05
+            sentido, "Full", steps_needed, 0.01, False, 0.05
                 )
         else:
             # Si no nos estamos devolviendo, mantener la dirección actual
             mymotortest_M2.motor_go(
-            False, "Full", steps_needed, 0.0005, False, 0.05
+            sentido, "Full", steps_needed, 0.005, False, 0.05
                 )
 
         # Mover el motor a la posición deseada
@@ -489,23 +503,28 @@ class Ui_Dialog(object):
     def update_motor3_angle(self, value):
         # Actualizar el ángulo en el QLabel correspondiente
         global previous_angle_M3
+        while GPIO.input(IR_SENSOR_PIN1) == GPIO.LOW or GPIO.input(IR_SENSOR_PIN3) == GPIO.LOW:
+            print("Objeto detectado")
         self.Angulo_M3.setText(str(value))
         # Calcular el número de pasos necesarios para mover el motor al ángulo deseado
         angle = value
-        steps_per_revolution = 1800
-        steps_needed = int(abs(angle - previous_angle_M3) * steps_per_revolution / 360)
+        steps_per_revolution = 700
+        steps_needed = int(abs(angle - previous_angle_M3) * steps_per_revolution / 180)
         GPIO.output(EN_pin, GPIO.LOW)  # Habilitar el motor
 
         # Mover el motor en la dirección apropiada según el cambio de ángulo
         if angle < previous_angle_M3:
-            # Si nos estamos devolviendo, cambiar la dirección
-            mymotortest_M3.motor_go(
-            True, "Full", steps_needed, 0.0005, False, 0.05
-                )
+            sentido=False
         else:
             # Si no nos estamos devolviendo, mantener la dirección actual
+            sentido=True
+        if GPIO.input(IR_SENSOR_PIN2) == GPIO.LOW:
             mymotortest_M3.motor_go(
-            False, "Full", steps_needed, 0.0005, False, 0.05
+            sentido, "Full", steps_needed, 0.01, False, 0.05
+                )
+        else:
+            mymotortest_M3.motor_go(
+            sentido, "Full", steps_needed, 0.005, False, 0.05
                 )
 
         # Mover el motor a la posición deseada
@@ -523,6 +542,10 @@ class Ui_Dialog(object):
         self.Angulo_M1.setText(str(np.rad2deg(theta1)))
         self.Angulo_M2.setText(str(np.rad2deg(theta2)))
         self.Angulo_M3.setText(str(np.rad2deg(theta3)))
+        self.update_motor1_angle((np.rad2deg(theta1)))
+        self.update_motor2_angle((np.rad2deg(theta2)))
+        self.update_motor3_angle((np.rad2deg(theta3)))
+         
         #-------------
 
         q1 = theta1
@@ -533,22 +556,23 @@ class Ui_Dialog(object):
     def automatico(self, value):
 	    print("Falta")
 
-    def apagar(self, value):
+    def Bot_apagar(self, value):
         GPIO.cleanup() # clear GPIO allocations after run
         print("Falta")
 
-    def Encender(self, value):
+    def Bot_Encender(self, value):
+        
         print("Falta")
 
         
     def Grip_ab(self, value):
         self.servo1.ChangeDutyCycle(0)
-        duty = "angle" / 18.0 + 2.5
+        duty = 90 / 18.0 + 2.5
         self.servo1.ChangeDutyCycle(duty)
         
     def Grip_ce(self, value):
         self.servo1.ChangeDutyCycle(0)
-        duty = "angle" / 18.0 + 2.5
+        duty = 180 / 18.0 + 2.5
         self.servo1.ChangeDutyCycle(duty)
 
 if __name__ == "__main__":
