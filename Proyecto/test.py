@@ -4,16 +4,16 @@ import math
 import numpy
 from sympy import *
 
-l1 = 10
-l2 = 10
-l3 = 10
+l1 = 18
+l2 = 16
+l3 = 38
 
 # Cinemática inversa
-Px = -9.545
-Py = 7.896
-Pz = 23.192
+Px = 0
+Py = -25
+Pz = 2
 
-e = sqrt(Px**2+Py**2)
+e = -sqrt(Px**2+Py**2)
 c = Pz - l1
 b = sqrt(e**2+c**2)
 # Theta 1
